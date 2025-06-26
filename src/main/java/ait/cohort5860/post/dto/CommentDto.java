@@ -1,5 +1,6 @@
 package ait.cohort5860.post.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +20,8 @@ public class CommentDto {
       "likes": 0
     }
     */
-    private String user;
+    @JsonProperty("user")
+    private String username;
     private String message;
     private LocalDateTime dateCreated;
     private int likes;

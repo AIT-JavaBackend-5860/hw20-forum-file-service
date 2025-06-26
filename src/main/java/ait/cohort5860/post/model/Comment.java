@@ -1,9 +1,6 @@
 package ait.cohort5860.post.model;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jdk.jfr.Enabled;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -22,20 +19,23 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode(of ="id")
-@Enabled
+@Entity
 @Table(name="comments")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String user;
+    private String username;
     private String message;
     private LocalDateTime dateCreated =  LocalDateTime.now();
     private int likes;
 
+    @ManyToOne
+    private Post post;
+
     public Comment(String message, String user) {
         this.message = message;
-        this.user = user;
+        this.username = user;
     }
 
     public void addLikes() {

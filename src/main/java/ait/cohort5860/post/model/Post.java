@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -35,16 +36,24 @@ public class Post {
     @Setter
     private String author;
     private LocalDateTime dateCreated = LocalDateTime.now();
-    // FIXME
+    @ManyToMany
     private Set<Tag> tags = new HashSet<>();
     private int likes;
-    // FIXME
+    @OneToMany(mappedBy="post")
     private List<Comment> comments = new ArrayList<>();
 
     public Post(String title, String content, String author) {
         this.title = title;
         this.content = content;
         this.author = author;
+    }
+
+    public Post(String title, String content, String author, Set<String> tags) {
+        this.title = title;
+        this.content = content;
+        this.author = author;
+       // this.tags.addAll((tags.stream().map(tag -> new Tag(tag)).toList()));
+        this.tags.addAll(tags.stream().map(Tag::new).toList());
     }
 
    public void addComment(Comment comment){
