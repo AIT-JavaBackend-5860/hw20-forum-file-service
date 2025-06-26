@@ -23,7 +23,7 @@ public class PostDto {
       "comments": []
     }
     */
-    private Long id;
+    private long id;
     private String title;
     private String content;
     private String author;
