@@ -25,12 +25,17 @@ import java.time.LocalDateTime;
 public class Comment {
     @Id // primary key for table 'comments'
     @GeneratedValue(strategy = GenerationType.IDENTITY) // auto-increment (PostgreSQL style)
+    @Column(name = "id")
     private long id;
     @Setter
+    @Column(name = "username")
     private String username;
     @Setter
+    @Column(name = "message",columnDefinition = "TEXT")
     private String message;
+    @Column(name = "date_created")
     private LocalDateTime dateCreated =  LocalDateTime.now();
+    @Column(name = "likes")
     private int likes;
     @Setter
     @ManyToOne
