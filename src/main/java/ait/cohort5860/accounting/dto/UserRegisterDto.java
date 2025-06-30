@@ -1,6 +1,10 @@
 package ait.cohort5860.accounting.dto;
 
-public class RegisterDto {
+import lombok.Getter;
+
+@Getter
+public class UserRegisterDto {
+
     private String login;
     private String password;
     private String firstName;

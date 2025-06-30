@@ -9,3 +9,6 @@ spring:
   hibernate:
    ddl-auto: none
   show-sql: true
+ data:
+  mongodb:
+   uri: ${MONGO_URI}

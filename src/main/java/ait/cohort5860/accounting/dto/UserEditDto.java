@@ -1,6 +1,9 @@
 package ait.cohort5860.accounting.dto;
 
-public class UpdateUserDto {
+import lombok.Getter;
+
+@Getter
+public class UserEditDto {
     private String firstName;
     private String lastName;
 }

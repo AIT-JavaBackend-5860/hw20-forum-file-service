@@ -1,40 +1,59 @@
 package ait.cohort5860.accounting.service;
 
-import ait.cohort5860.accounting.dto.AccountResponseDto;
-import ait.cohort5860.accounting.dto.RegisterDto;
-import ait.cohort5860.accounting.dto.UpdateUserDto;
+import ait.cohort5860.accounting.dao.UserAccountRepository;
+import ait.cohort5860.accounting.dto.*;
+import ait.cohort5860.accounting.dto.exception.UserExistsException;
+import ait.cohort5860.accounting.model.UserAccount;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AccountingServiceImpl implements AccountingService {
 
+    private final UserAccountRepository userAccountRepository;
+    private final ModelMapper mapper;
+    private final ModelMapper modelMapper;
+
     @Override
-    public AccountResponseDto register(RegisterDto dto) {
+    public UserDto register(UserRegisterDto dto) {
+        if(userAccountRepository.existsById(dto.getLogin())){
+            throw new UserExistsException();
+
+        }
+
+        UserAccount userAccount = mapper.map(dto, UserAccount.class);
+        userAccount.addRole("USER");
+
+        userAccountRepository.save(userAccount);
+        return  modelMapper.map(userAccount, UserDto.class);
+
+        //return null;
+    }
+
+    @Override
+    public UserDto findByLogin(String login) {
         return null;
     }
 
     @Override
-    public AccountResponseDto findByLogin(String login) {
+    public UserDto updateUser(String login, UserEditDto dto) {
         return null;
     }
 
     @Override
-    public AccountResponseDto updateUser(String login, UpdateUserDto dto) {
+    public UserDto addRole(String login, String role) {
         return null;
     }
 
     @Override
-    public AccountResponseDto addRole(String login, String role) {
+    public UserDto removeRole(String login, String role) {
         return null;
     }
 
     @Override
-    public AccountResponseDto removeRole(String login, String role) {
-        return null;
-    }
-
-    @Override
-    public AccountResponseDto delete(String login) {
+    public UserDto delete(String login) {
         return null;
     }
 

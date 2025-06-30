@@ -7,21 +7,21 @@ import org.springframework.transaction.annotation.Transactional;
 public interface AccountingService {
 
     @Transactional
-    AccountResponseDto register(RegisterDto dto);
+    UserDto register(UserRegisterDto dto);
 
-    AccountResponseDto findByLogin(String login);
-
-    @Transactional
-    AccountResponseDto updateUser(String login, UpdateUserDto dto);
+    UserDto findByLogin(String login);
 
     @Transactional
-    AccountResponseDto addRole(String login, String role);
+    UserDto updateUser(String login, UserEditDto dto);
 
     @Transactional
-    AccountResponseDto removeRole(String login, String role);
+    UserDto addRole(String login, String role);
 
     @Transactional
-    AccountResponseDto delete(String login);
+    UserDto removeRole(String login, String role);
+
+    @Transactional
+    UserDto delete(String login);
 
     @Transactional
     void changePassword(String oldPassword, String newPassword);

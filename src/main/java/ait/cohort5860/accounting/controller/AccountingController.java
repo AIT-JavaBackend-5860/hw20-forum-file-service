@@ -17,32 +17,32 @@ public class AccountingController {
     private final AccountingService service;
 
     @PostMapping("/register")
-    public AccountResponseDto register(@RequestBody RegisterDto dto) {
+    public UserDto register(@RequestBody UserRegisterDto dto) {
         return service.register(dto);
     }
 
     @GetMapping("/user/{login}")
-    public AccountResponseDto getUser(@PathVariable String login) {
+    public UserDto getUser(@PathVariable String login) {
         return service.findByLogin(login);
     }
 
     @PatchMapping("/user/{login}")
-    public AccountResponseDto updateUser(@PathVariable String login, @RequestBody UpdateUserDto dto) {
+    public UserDto updateUser(@PathVariable String login, @RequestBody UserEditDto dto) {
         return service.updateUser(login, dto);
     }
 
     @PatchMapping("/user/{login}/role/{role}")
-    public AccountResponseDto addRole(@PathVariable String login, @PathVariable String role) {
+    public UserDto addRole(@PathVariable String login, @PathVariable String role) {
         return service.addRole(login, role);
     }
 
     @DeleteMapping("/user/{login}/role/{role}")
-    public AccountResponseDto deleteRole(@PathVariable String login, @PathVariable String role) {
+    public UserDto deleteRole(@PathVariable String login, @PathVariable String role) {
         return service.removeRole(login, role);
     }
 
     @DeleteMapping("/user/{login}")
-    public AccountResponseDto deleteUser(@PathVariable String login) {
+    public UserDto deleteUser(@PathVariable String login) {
         return service.delete(login);
     }
 
