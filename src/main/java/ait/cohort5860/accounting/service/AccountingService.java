@@ -9,7 +9,7 @@ public interface AccountingService {
     @Transactional
     UserDto register(UserRegisterDto dto);
 
-    UserDto findByLogin(String login);
+    UserDto getUser(String login);
 
     @Transactional
     UserDto updateUser(String login, UserEditDto dto);
@@ -17,12 +17,17 @@ public interface AccountingService {
     @Transactional
     UserDto addRole(String login, String role);
 
+
     @Transactional
     UserDto removeRole(String login, String role);
 
     @Transactional
-    UserDto delete(String login);
+    UserDto removeUser(String login);
 
     @Transactional
     void changePassword(String oldPassword, String newPassword);
+
+    @Transactional
+    RolesDto changeRolesList(String login, String role, boolean isAddRole);
+
 }

@@ -1,8 +1,13 @@
 package ait.cohort5860.accounting.service;
 
 import ait.cohort5860.accounting.dao.UserAccountRepository;
-import ait.cohort5860.accounting.dto.*;
+import ait.cohort5860.accounting.dto.RolesDto;
+import ait.cohort5860.accounting.dto.UserDto;
+import ait.cohort5860.accounting.dto.UserEditDto;
+import ait.cohort5860.accounting.dto.UserRegisterDto;
+import ait.cohort5860.accounting.dto.exception.InvalidDataException;
 import ait.cohort5860.accounting.dto.exception.UserExistsException;
+import ait.cohort5860.accounting.dto.exception.UserNotFoundException;
 import ait.cohort5860.accounting.model.UserAccount;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -18,7 +23,7 @@ public class AccountingServiceImpl implements AccountingService {
 
     @Override
     public UserDto register(UserRegisterDto dto) {
-        if(userAccountRepository.existsById(dto.getLogin())){
+        if (userAccountRepository.existsById(dto.getLogin())) {
             throw new UserExistsException();
 
         }
@@ -27,19 +32,31 @@ public class AccountingServiceImpl implements AccountingService {
         userAccount.addRole("USER");
 
         userAccountRepository.save(userAccount);
-        return  modelMapper.map(userAccount, UserDto.class);
+        return modelMapper.map(userAccount, UserDto.class);
 
-        //return null;
     }
 
     @Override
-    public UserDto findByLogin(String login) {
-        return null;
+    public UserDto getUser(String login) {
+        UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
+        return modelMapper.map(userAccount, UserDto.class);
     }
 
     @Override
-    public UserDto updateUser(String login, UserEditDto dto) {
-        return null;
+    public UserDto updateUser(String login, UserEditDto userEditDto) {
+
+        UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
+        if (userEditDto.getFirstName() != null) {
+            userAccount.setFirstName(userEditDto.getFirstName());
+        }
+
+        if (userEditDto.getLastName() != null) {
+            userAccount.setLastName(userEditDto.getLastName());
+        }
+
+        userAccountRepository.save(userAccount);
+        return modelMapper.map(userAccount, UserDto.class);
+
     }
 
     @Override
@@ -47,18 +64,50 @@ public class AccountingServiceImpl implements AccountingService {
         return null;
     }
 
+
     @Override
     public UserDto removeRole(String login, String role) {
-        return null;
+        UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
+        userAccountRepository.delete(userAccount);
+        return modelMapper.map(userAccount, UserDto.class);
     }
 
     @Override
-    public UserDto delete(String login) {
-        return null;
+    public UserDto removeUser(String login) {
+        UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
+
+        userAccountRepository.delete(userAccount);
+        return modelMapper.map(userAccount, UserDto.class);
     }
 
     @Override
-    public void changePassword(String oldPassword, String newPassword) {
+    public void changePassword(String login, String newPassword) {
+
+        UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
+
+        userAccount.setPassword(newPassword);
+        userAccountRepository.save(userAccount);
+
+    }
+
+    @Override
+    public RolesDto changeRolesList(String login, String role, boolean isAddRole) {
+        UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
+
+        try {
+            if (isAddRole) {
+
+                userAccount.addRole(role);
+            } else {
+
+                userAccount.removeRole(role);
+
+            }
+        } catch (Exception e) {
+            throw new InvalidDataException();
+        }
+        userAccountRepository.save(userAccount);
+        return modelMapper.map(userAccount, RolesDto.class);
 
     }
 }

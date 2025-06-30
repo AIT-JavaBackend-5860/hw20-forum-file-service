@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 
 @RestController
 @RequestMapping("/account")
@@ -17,13 +19,13 @@ public class AccountingController {
     private final AccountingService service;
 
     @PostMapping("/register")
-    public UserDto register(@RequestBody UserRegisterDto dto) {
-        return service.register(dto);
+    public UserDto register(@RequestBody UserRegisterDto UserRegisterDto) {
+        return service.register(UserRegisterDto);
     }
 
     @GetMapping("/user/{login}")
     public UserDto getUser(@PathVariable String login) {
-        return service.findByLogin(login);
+        return service.getUser(login);
     }
 
     @PatchMapping("/user/{login}")
@@ -42,13 +44,13 @@ public class AccountingController {
     }
 
     @DeleteMapping("/user/{login}")
-    public UserDto deleteUser(@PathVariable String login) {
-        return service.delete(login);
+    public UserDto removeUser(@PathVariable String login) {
+        return service.removeUser(login);
     }
 
     @PatchMapping("/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void changePassword(@RequestHeader("X-Password") String oldPassword, @RequestBody String newPassword) {
-        service.changePassword(oldPassword, newPassword);
+    public void changePassword(Principal principal, @RequestHeader("X-Password") String oldPassword, @RequestBody String newPassword) {
+        service.changePassword(principal.getName(), newPassword);
     }
 }
