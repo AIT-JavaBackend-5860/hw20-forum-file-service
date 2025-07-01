@@ -14,12 +14,6 @@ public interface AccountingService {
     @Transactional
     UserDto updateUser(String login, UserEditDto dto);
 
-    @Transactional
-    UserDto addRole(String login, String role);
-
-
-    @Transactional
-    UserDto removeRole(String login, String role);
 
     @Transactional
     UserDto removeUser(String login);

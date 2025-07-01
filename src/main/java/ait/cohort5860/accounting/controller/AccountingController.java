@@ -15,7 +15,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class AccountingController {
 
-    // TODO
+
     private final AccountingService service;
 
     @PostMapping("/register")
@@ -23,24 +23,25 @@ public class AccountingController {
         return service.register(UserRegisterDto);
     }
 
+    @PostMapping("/login")
+    public UserDto login(Principal principal) {
+        return service.getUser(principal.getName()) ;
+    }
+
     @GetMapping("/user/{login}")
     public UserDto getUser(@PathVariable String login) {
         return service.getUser(login);
     }
 
-    @PatchMapping("/user/{login}")
-    public UserDto updateUser(@PathVariable String login, @RequestBody UserEditDto dto) {
-        return service.updateUser(login, dto);
-    }
 
     @PatchMapping("/user/{login}/role/{role}")
-    public UserDto addRole(@PathVariable String login, @PathVariable String role) {
-        return service.addRole(login, role);
+    public RolesDto addRole(@PathVariable String login, @PathVariable String role) {
+        return service.changeRolesList(login, role, true);
     }
 
     @DeleteMapping("/user/{login}/role/{role}")
-    public UserDto deleteRole(@PathVariable String login, @PathVariable String role) {
-        return service.removeRole(login, role);
+    public RolesDto deleteRole(@PathVariable String login, @PathVariable String role) {
+        return service.changeRolesList(login, role,true);
     }
 
     @DeleteMapping("/user/{login}")
@@ -48,9 +49,15 @@ public class AccountingController {
         return service.removeUser(login);
     }
 
+    @PatchMapping("/user/{login}")
+    public UserDto updateUser(@PathVariable String login, @RequestBody UserEditDto dto) {
+        return service.updateUser(login, dto);
+    }
+
+
     @PatchMapping("/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void changePassword(Principal principal, @RequestHeader("X-Password") String oldPassword, @RequestBody String newPassword) {
+    public void changePassword(Principal principal, @RequestHeader("X-Password") String newPassword) {
         service.changePassword(principal.getName(), newPassword);
     }
 }

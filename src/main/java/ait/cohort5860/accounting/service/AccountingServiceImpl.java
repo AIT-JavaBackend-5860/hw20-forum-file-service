@@ -8,18 +8,23 @@ import ait.cohort5860.accounting.dto.UserRegisterDto;
 import ait.cohort5860.accounting.dto.exception.InvalidDataException;
 import ait.cohort5860.accounting.dto.exception.UserExistsException;
 import ait.cohort5860.accounting.dto.exception.UserNotFoundException;
+import ait.cohort5860.accounting.model.Role;
 import ait.cohort5860.accounting.model.UserAccount;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AccountingServiceImpl implements AccountingService {
+public class AccountingServiceImpl implements AccountingService, CommandLineRunner {
 
     private final UserAccountRepository userAccountRepository;
     private final ModelMapper mapper;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
+
 
     @Override
     public UserDto register(UserRegisterDto dto) {
@@ -30,6 +35,9 @@ public class AccountingServiceImpl implements AccountingService {
 
         UserAccount userAccount = mapper.map(dto, UserAccount.class);
         userAccount.addRole("USER");
+
+        String encodedPassword = passwordEncoder.encode(dto.getPassword());
+        userAccount.setPassword(encodedPassword);
 
         userAccountRepository.save(userAccount);
         return modelMapper.map(userAccount, UserDto.class);
@@ -59,18 +67,6 @@ public class AccountingServiceImpl implements AccountingService {
 
     }
 
-    @Override
-    public UserDto addRole(String login, String role) {
-        return null;
-    }
-
-
-    @Override
-    public UserDto removeRole(String login, String role) {
-        UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
-        userAccountRepository.delete(userAccount);
-        return modelMapper.map(userAccount, UserDto.class);
-    }
 
     @Override
     public UserDto removeUser(String login) {
@@ -109,5 +105,24 @@ public class AccountingServiceImpl implements AccountingService {
         userAccountRepository.save(userAccount);
         return modelMapper.map(userAccount, RolesDto.class);
 
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        if (!userAccountRepository.existsById("admin")) {
+
+            UserAccount admin = UserAccount
+                    .builder()
+                    .login("admin")
+                    .password(passwordEncoder.encode("admin"))
+                    .firstName("Admin")
+                    .lastName("Admin")
+                    .role(Role.USER)
+                    .role(Role.MODERATOR)
+                    .role(Role.ADMINISTRATOR)
+                    .build();
+
+            userAccountRepository.save(admin);
+        }
     }
 }
