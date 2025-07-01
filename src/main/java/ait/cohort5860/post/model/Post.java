@@ -50,7 +50,8 @@ public class Post {
     @Setter
     @Column(name = "likes")
     private int likes;
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post")
+    //@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true) - если нет каскадя для таблицы коммент
     private List<Comment> comments = new ArrayList<>();
 
     public Post(String title, String content, String author) {
@@ -67,11 +68,14 @@ public class Post {
         this.tags.addAll(tags.stream().map(Tag::new).toList());
     }
 
-    public void addComment(Comment comment) {
+    /*
+    public void addComment(Comment comment) { //  После добавления commentRepository.save(comment) в сервисе + CASCADE для таблицы—
+    этот метод стал не нужен, так как связь и сохранение комментария происходят напрямую.
 
         comments.add(comment);
         comment.setPost(this);     // INSERT INTO comments (message, username, post_id)
     }
+    */
 
     public void addLikes() {
         likes++;

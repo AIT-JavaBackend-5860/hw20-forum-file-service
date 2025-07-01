@@ -81,6 +81,7 @@ databaseChangeLog:
                     nullable: false
                     foreignKeyName: fk_comment_post
                     references: posts(id)
+                    onDelete: CASCADE
   - changeSet:
       id: 03-create-tags
       author: roman
@@ -108,6 +109,7 @@ databaseChangeLog:
                     nullable: false
                     foreignKeyName: fk_post_tags_posts
                     references: posts(id)
+                    onDelete: CASCADE
               - column:
                   name: tag_name
                   type: VARCHAR(255)

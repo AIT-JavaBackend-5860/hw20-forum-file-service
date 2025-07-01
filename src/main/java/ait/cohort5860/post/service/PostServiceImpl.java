@@ -1,5 +1,6 @@
 package ait.cohort5860.post.service;
 
+import ait.cohort5860.post.dao.CommentRepository;
 import ait.cohort5860.post.dao.PostRepository;
 import ait.cohort5860.post.dao.TagRepository;
 import ait.cohort5860.post.dto.NewCommentDto;
@@ -27,6 +28,7 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
+    private final CommentRepository commentRepository;
     private final ModelMapper modelMapper;
 
     @Override
@@ -112,20 +114,24 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
     public PostDto addComment(Long id, String author, NewCommentDto newCommentDto) {
 
         Post post = postRepository.findById(id) // find the post by ID
                 .orElseThrow(PostNotFoundException::new); // throw 404 exception if not found
 
         // create new comment with author and message
-        Comment comment = new Comment();
-        comment.setUsername(author);
-        comment.setMessage(newCommentDto.getMessage());
+        Comment comment = new Comment(author, newCommentDto.getMessage());
 
+        /*
         comment.setPost(post); // link comment to post
-        post.addComment(comment); // add comment to posts list
-
+        post.addComment(comment); // add comment to posts list - can be delete
         post = postRepository.save(post);
+        */
+
+        comment.setPost(post);                  // link comment to post
+        commentRepository.save(comment);        // save comment only
+
         return modelMapper.map(post, PostDto.class); // convert to view object
     }
 
