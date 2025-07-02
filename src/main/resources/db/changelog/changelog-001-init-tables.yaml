@@ -121,3 +121,31 @@ databaseChangeLog:
             tableName: posts_tags
             columnNames: post_id, tag_name
             constraintName: pk_posts_tags
+  - changeSet:
+      id: 05-modify-comment-fk-cascade
+      author: roman
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: comments
+            constraintName: fk_comment_post
+        - addForeignKeyConstraint:
+            baseTableName: comments
+            baseColumnNames: post_id
+            constraintName: fk_comment_post
+            referencedTableName: posts
+            referencedColumnNames: id
+            onDelete: CASCADE
+  - changeSet:
+      id: 06-modify-posts_tags-fk-cascade
+      author: roman
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: posts_tags
+            constraintName: fk_post_tags_posts
+        - addForeignKeyConstraint:
+            baseTableName: posts_tags
+            baseColumnNames: post_id
+            constraintName: fk_post_tags_posts
+            referencedTableName: posts
+            referencedColumnNames: id
+            onDelete: CASCADE
