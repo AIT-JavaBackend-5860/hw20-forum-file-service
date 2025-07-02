@@ -39,11 +39,11 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.POST, "/forum/post/{author}") // только автор от своего имени может добавлять пост
                     .access(new WebExpressionAuthorizationManager("#author == authentication.name"))
 
-                .requestMatchers(HttpMethod.PATCH, "/forum/post/{id}/comment/{author}") // только автор от своего имени может изменять комментарии поста
+                .requestMatchers(HttpMethod.PATCH, "/forum/post/{id}/comment/{author}") // только автор от своего имени может создавать/изменять комментарии
                     .access(new WebExpressionAuthorizationManager("#author == authentication.name"))
 
-                .requestMatchers(HttpMethod.PATCH, "/forum/post/{postId}/comment/{commenter}") // только под своим именем комментатор может оставить комментарий
-                    .access(new WebExpressionAuthorizationManager("#commenter == authentication.name"))
+                //.requestMatchers(HttpMethod.PATCH, "/forum/post/{postId}/comment/{commenter}") // только под своим именем комментатор может оставить комментарий
+                    //.access(new WebExpressionAuthorizationManager("#commenter == authentication.name"))
 
                 .requestMatchers(HttpMethod.DELETE, "/account/user/{login}")
                     .access(new WebExpressionAuthorizationManager("#login == authentication.name or hasRole('ADMINISTRATOR')"))
