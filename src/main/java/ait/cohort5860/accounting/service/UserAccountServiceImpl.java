@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AccountingServiceImpl implements AccountingService, CommandLineRunner {
+public class UserAccountServiceImpl implements AccountingService, CommandLineRunner { //CommandLineRunner - будет выполнено раньше всего
 
     private final UserAccountRepository userAccountRepository;
     private final ModelMapper mapper;
@@ -34,13 +34,13 @@ public class AccountingServiceImpl implements AccountingService, CommandLineRunn
         }
 
         UserAccount userAccount = mapper.map(dto, UserAccount.class);
-        userAccount.addRole("USER");
+        userAccount.addRole("USER"); // добавили роль
 
-        String encodedPassword = passwordEncoder.encode(dto.getPassword());
-        userAccount.setPassword(encodedPassword);
+        String encodedPassword = passwordEncoder.encode(dto.getPassword()); // скодировали пароль
+        userAccount.setPassword(encodedPassword); // установили пароль
 
-        userAccountRepository.save(userAccount);
-        return modelMapper.map(userAccount, UserDto.class);
+        userAccountRepository.save(userAccount); // записали
+        return modelMapper.map(userAccount, UserDto.class); // вернули ляля
 
     }
 
@@ -107,12 +107,13 @@ public class AccountingServiceImpl implements AccountingService, CommandLineRunn
 
     }
 
+    // Если не существует пользователя админ - создать его
     @Override
     public void run(String... args) throws Exception {
         if (!userAccountRepository.existsById("admin")) {
 
-            UserAccount admin = UserAccount
-                    .builder()
+            UserAccount admin = UserAccount.builder()
+
                     .login("admin")
                     .password(passwordEncoder.encode("admin"))
                     .firstName("Admin")

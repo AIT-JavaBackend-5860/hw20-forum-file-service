@@ -41,7 +41,7 @@ public class AccountingController {
 
     @DeleteMapping("/user/{login}/role/{role}")
     public RolesDto deleteRole(@PathVariable String login, @PathVariable String role) {
-        return service.changeRolesList(login, role,true);
+        return service.changeRolesList(login, role,false);
     }
 
     @DeleteMapping("/user/{login}")
