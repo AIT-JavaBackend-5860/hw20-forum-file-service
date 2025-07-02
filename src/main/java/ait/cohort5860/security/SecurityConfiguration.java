@@ -33,14 +33,14 @@ public class SecurityConfiguration {
                 .requestMatchers("/account/user/{login}/role/{role}") // добавлять роли
                     .hasRole(Role.ADMINISTRATOR.name()) // должен юзер должен иметь роль админа
 
-                .requestMatchers(HttpMethod.PATCH, "/account/user/{login}") // апдейтить можно только свой профиль
+                .requestMatchers(HttpMethod.PATCH, "/account/user/{login}","/forum/post/{id}/comment/{login}") // апдейтить можно только свой профиль
                     .access(new WebExpressionAuthorizationManager("#login == authentication.name"))
 
                 .requestMatchers(HttpMethod.POST, "/forum/post/{author}") // только автор от своего имени может добавлять пост
                     .access(new WebExpressionAuthorizationManager("#author == authentication.name"))
 
-                .requestMatchers(HttpMethod.PATCH, "/forum/post/{id}/comment/{author}") // только автор от своего имени может создавать/изменять комментарии
-                    .access(new WebExpressionAuthorizationManager("#author == authentication.name"))
+                //.requestMatchers(HttpMethod.PATCH, "/forum/post/{id}/comment/{author}") // только автор от своего имени может создавать/изменять комментарии
+                    //.access(new WebExpressionAuthorizationManager("#author == authentication.name"))
 
                 //.requestMatchers(HttpMethod.PATCH, "/forum/post/{postId}/comment/{commenter}") // только под своим именем комментатор может оставить комментарий
                     //.access(new WebExpressionAuthorizationManager("#commenter == authentication.name"))
