@@ -2,9 +2,9 @@ package ait.cohort5860.accounting.controller;
 
 import ait.cohort5860.accounting.dto.*;
 import ait.cohort5860.accounting.service.AccountingService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -13,13 +13,13 @@ import java.security.Principal;
 @RestController
 @RequestMapping("/account")
 @RequiredArgsConstructor
-public class AccountingController {
+public class UserAccountController {
 
 
     private final AccountingService service;
 
     @PostMapping("/register")
-    public UserDto register(@RequestBody UserRegisterDto UserRegisterDto) {
+    public UserDto register(@RequestBody @Valid UserRegisterDto UserRegisterDto) {
         return service.register(UserRegisterDto);
     }
 
@@ -50,7 +50,7 @@ public class AccountingController {
     }
 
     @PatchMapping("/user/{login}")
-    public UserDto updateUser(@PathVariable String login, @RequestBody UserEditDto dto) {
+    public UserDto updateUser(@PathVariable String login, @RequestBody @Valid UserEditDto dto) {
         return service.updateUser(login, dto);
     }
 
