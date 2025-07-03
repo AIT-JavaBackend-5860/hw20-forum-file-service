@@ -10,7 +10,9 @@ import ait.cohort5860.post.dto.exceptions.PostNotFoundException;
 import ait.cohort5860.post.model.Comment;
 import ait.cohort5860.post.model.Post;
 import ait.cohort5860.post.model.Tag;
+import ait.cohort5860.post.service.logging.PostLogger;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+// @Slf4j(topic="Post Service") - log lombok annotation
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
@@ -54,7 +57,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDto findPostById(Long id) {
-
+        // log.info("Finding post by id {}", id); - log to console
         Post post = postRepository.findById(id) // find the post by ID
                 .orElseThrow(PostNotFoundException::new); // throw 404 exception if not found
 
@@ -62,6 +65,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
+    @PostLogger
     public void addLike(Long id) {
 
         Post post = postRepository.findById(id) // find the post by ID
@@ -73,33 +78,43 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
+    @PostLogger
     public PostDto updatePost(Long id, NewPostDto newPostDto) {
-        Post post = postRepository.findById(id) // find the post by ID
-                .orElseThrow(PostNotFoundException::new); // throw 404 exception if not found
+        // ищем пост по ID, если нет — выбрасываем ошибку
+        Post post = postRepository.findById(id)
+                .orElseThrow(PostNotFoundException::new);
 
+        // если передан новый заголовок — обновляем
         if (newPostDto.getTitle() != null) {
             post.setTitle(newPostDto.getTitle());
         }
 
+        // если передано новое содержание — обновляем
         if (newPostDto.getContent() != null) {
             post.setContent(newPostDto.getContent());
         }
 
-        if (newPostDto.getTags() != null) { // check if tag list is not null
-            post.setTags( // set tag set for the post
-                    newPostDto
-                            .getTags() // get list of tag names as strings
-                            .stream() // convert to stream
-                            .map(Tag::new) // create Tag object from each string
-                            .collect(
-                                    Collectors.toSet() // all tags into a Set<Tag>
-                            )
-            );
+        // если передан список тегов
+        if (newPostDto.getTags() != null) {
+            Set<Tag> tagSet = newPostDto.getTags().stream()
+                    .map(tagName -> {
+                        // пробуем найти тег в базе
+                        return tagRepository.findById(tagName)
+                                // если не найден — создаём и сохраняем
+                                .orElseGet(() -> tagRepository.save(new Tag(tagName)));
+                    })
+                    .collect(Collectors.toSet());
+
+            // обновляем теги у поста
+            post.setTags(tagSet);
         }
 
+        // сохраняем обновлённый пост
         postRepository.save(post);
 
-        return modelMapper.map(post, PostDto.class); // view
+        // возвращаем пост в виде DTO
+        return modelMapper.map(post, PostDto.class);
     }
 
     @Override
