@@ -54,6 +54,10 @@ public class UserAccountController {
         return service.updateUser(login, dto);
     }
 
+    @PostMapping("/email")
+    public void sendEmail(@RequestBody @Valid EmailDto emailDto) {
+        service.sendEmail(emailDto);
+    }
 
     @PatchMapping("/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)

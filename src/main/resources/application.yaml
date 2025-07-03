@@ -17,7 +17,7 @@ spring:
   port: 587
   username: ${EMAIL}
   password: ${GMAIL_PASSWORD}
-  propertiess:
+  properties:
      mail:
        smtp:
          auth: true
