@@ -27,7 +27,6 @@ public class SecurityConfiguration {
         http.httpBasic(Customizer.withDefaults()); // включение базоваой дефл.авторизации
         http.csrf(csrf -> csrf.disable()); // кроссайтовая защита, не https использовать нельзя
 
-
         http.authorizeHttpRequests( // снятие защиты
 
                 authorize -> authorize
@@ -54,8 +53,6 @@ public class SecurityConfiguration {
                         .access(new WebExpressionAuthorizationManager("#login == authentication.name or hasRole('ADMINISTRATOR')"))
 
 
-
-
                         .requestMatchers(HttpMethod.PATCH, "/forum/post/{id}")
                         .access(((authentication, context) ->
                                 new AuthorizationDecision(webSecurity.checkPostAuthor(context.getVariables().get("id"),
@@ -69,24 +66,6 @@ public class SecurityConfiguration {
                             return new AuthorizationDecision(isAuthor || isModerator);
                         })
 
-                /*
-
-                код учителя
-
-                .requestMatchers(HttpMethod.PATCH, "/forum/post/{id}")
-                .access(((authentication, context) ->
-                new AuthorizationDecision(webSecurity.checkPostAuthor(context.getVariables().get("id"),
-                authentication.get().getName()))))
-
-                .requestMatchers(HttpMethod.DELETE, "/forum/post/{id}")
-                .access((authentication, context) -> {
-                boolean isAuthor = webSecurity.checkPostAuthor(context.getVariables().get("id"),
-                authentication.get().getName());
-                boolean isModerator = context.getRequest().isUserInRole(Role.MODERATOR.name());
-                return new AuthorizationDecision(isAuthor || isModerator);
-                })
-
-                */
                         .anyRequest() // все
                         .authenticated()); // проверяется
 
