@@ -24,4 +24,5 @@ public interface AccountingService {
     @Transactional
     RolesDto changeRolesList(String login, String role, boolean isAddRole);
 
+    void sendEmail(EmailDto emailDto);
 }

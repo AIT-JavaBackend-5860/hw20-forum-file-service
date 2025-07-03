@@ -90,11 +90,7 @@ public class SecurityConfiguration {
                         .anyRequest() // все
                         .authenticated()); // проверяется
 
-        // Добавим отключение sessionManagement для простоты
-        http.sessionManagement(session -> session.disable());
 
-        // Подключаем httpBasic
-        http.httpBasic(Customizer.withDefaults());
 
             return http.build();
     }
