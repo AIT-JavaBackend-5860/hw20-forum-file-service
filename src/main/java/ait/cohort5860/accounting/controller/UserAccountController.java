@@ -59,9 +59,18 @@ public class UserAccountController {
         service.sendEmail(emailDto);
     }
 
+    /*
     @PatchMapping("/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void changePassword(Principal principal, @RequestHeader("X-Password") String newPassword) {
         service.changePassword(principal.getName(), newPassword);
+    }
+*/
+
+    @PatchMapping("/password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void changePassword(Principal principal,
+                               @RequestBody @Valid UserPasswordChangeDto dto) {
+        service.changePassword(principal.getName(), dto.getOldPassword(), dto.getNewPassword());
     }
 }

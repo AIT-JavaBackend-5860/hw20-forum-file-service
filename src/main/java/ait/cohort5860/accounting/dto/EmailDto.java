@@ -2,9 +2,11 @@ package ait.cohort5860.accounting.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class EmailDto {
     @NotBlank(message = "To is required")
     @Email(message = "To must be a valid email")

@@ -1,4 +1,4 @@
-package ait.cohort5860.accounting.dto.exception;
+package ait.cohort5860.common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

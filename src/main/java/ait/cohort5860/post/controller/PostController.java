@@ -5,6 +5,8 @@ import ait.cohort5860.post.dto.NewPostDto;
 import ait.cohort5860.post.dto.PostDto;
 import ait.cohort5860.post.service.PostService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
-//@CrossOrigin(origins)
+
+// @CrossOrigin(origins="https://localhost:3000", methods={}, allowedHeaders = "*", maxAge = 3600) // без Spring Security
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/forum") // Base path for all endpoints
@@ -45,7 +48,7 @@ public class PostController {
     // PATCH
     // Update post (title, content, tags)
     @PatchMapping("/post/{id}")
-    public PostDto updatePost(@PathVariable Long id, @RequestBody @Valid NewPostDto newPostDto) {
+    public PostDto updatePost(@PathVariable Long id, @RequestBody NewPostDto newPostDto) {
         return postService.updatePost(id, newPostDto);
     }
 
@@ -80,7 +83,7 @@ public class PostController {
     // GET
     // Find posts by date range
     @GetMapping("/posts/period")
-    public Iterable<PostDto> findPostsByPeriod(@RequestParam("dateFrom") LocalDate from, @RequestParam("dateTo") LocalDate to) {
+    public Iterable<PostDto> findPostsByPeriod(@RequestParam("dateFrom") @NotNull(message="Date 'from' required") LocalDate from, @RequestParam("dateTo") @NotNull(message="Date 'to' required") LocalDate to) {
         return postService.findPostsByPeriod(from, to);
     }
 }

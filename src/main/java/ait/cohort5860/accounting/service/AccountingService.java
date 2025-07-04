@@ -19,7 +19,7 @@ public interface AccountingService {
     UserDto removeUser(String login);
 
     @Transactional
-    void changePassword(String oldPassword, String newPassword);
+    void changePassword(String login, String oldPassword, String newPassword);
 
     @Transactional
     RolesDto changeRolesList(String login, String role, boolean isAddRole);

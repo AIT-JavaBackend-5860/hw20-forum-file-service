@@ -2,9 +2,9 @@ package ait.cohort5860.accounting.service;
 
 import ait.cohort5860.accounting.dao.UserAccountRepository;
 import ait.cohort5860.accounting.dto.*;
-import ait.cohort5860.accounting.dto.exception.InvalidDataException;
-import ait.cohort5860.accounting.dto.exception.UserExistsException;
-import ait.cohort5860.accounting.dto.exception.UserNotFoundException;
+import ait.cohort5860.accounting.exception.InvalidDataException;
+import ait.cohort5860.accounting.exception.UserExistsException;
+import ait.cohort5860.accounting.exception.UserNotFoundException;
 import ait.cohort5860.accounting.model.Role;
 import ait.cohort5860.accounting.model.UserAccount;
 import lombok.RequiredArgsConstructor;
@@ -76,15 +76,29 @@ public class UserAccountServiceImpl implements AccountingService, CommandLineRun
         return modelMapper.map(userAccount, UserDto.class);
     }
 
+    /*
     @Override
     public void changePassword(String login, String newPassword) {
-
         UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
-
-        userAccount.setPassword(newPassword);
+        userAccount.setPassword(passwordEncoder.encode(newPassword));
         userAccountRepository.save(userAccount);
-
     }
+*/
+
+    @Override
+    public void changePassword(String login, String oldPassword, String newPassword) {
+        UserAccount userAccount = userAccountRepository.findById(login)
+                .orElseThrow(UserNotFoundException::new);
+
+        if (!passwordEncoder.matches(oldPassword, userAccount.getPassword())) {
+            throw new InvalidDataException("Old password is invalid");
+        }
+
+        userAccount.setPassword(passwordEncoder.encode(newPassword));
+        userAccountRepository.save(userAccount);
+    }
+
+
     @Override
     public void sendEmail(EmailDto emailDto) {
         SimpleMailMessage message = new SimpleMailMessage();

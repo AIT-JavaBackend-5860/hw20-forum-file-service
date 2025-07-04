@@ -27,6 +27,7 @@ public class NewPostDto {
     @Size(min = 10, max = 10000, message = "Content must be between 10 and 10000 characters")
     private String content;
 
-    private Set<@Size(min = 1, max = 30, message = "Each tag must be 1-30 characters") String> tags;
+    //private Set<@Size(min = 1, max = 30, message = "Each tag must be 1-30 characters") String> tags;
+    private Set<String> tags;
 }
 

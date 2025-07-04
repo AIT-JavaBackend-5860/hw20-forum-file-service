@@ -31,7 +31,7 @@ public class SecurityConfiguration {
         http.httpBasic(Customizer.withDefaults()); // включение базоваой дефл.авторизации
         http.csrf(csrf -> csrf.disable()); // кроссайтовая защита, не https использовать нельзя
 
-        http.cors(Customizer.withDefaults());
+        http.cors(Customizer.withDefaults()); // дефолтный бин добавить в настройки и все разрешить
         http.authorizeHttpRequests( // снятие защиты
 
                 authorize -> authorize
@@ -90,10 +90,10 @@ public class SecurityConfiguration {
     @Bean
     UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://example.com"));
-        configuration.setAllowedOrigins(Arrays.asList("*"));
+        //configuration.setAllowedOrigins(Arrays.asList("https://example.com"));
+        configuration.setAllowedOrigins(Arrays.asList("*")); // все сайты разрешены
         configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS","PATCH","HEAD"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedHeaders(Arrays.asList("*")); // все заголовки разрешены
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

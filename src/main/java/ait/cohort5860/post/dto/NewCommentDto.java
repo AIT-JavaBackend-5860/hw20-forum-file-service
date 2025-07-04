@@ -18,7 +18,7 @@ public class NewCommentDto {
     }
     */
     @NotBlank(message = "Message is required")
-    @Size(min = 1, max = 1000, message = "Message must be between 1 and 1000 characters")
+    @Size(min = 10, max = 1000, message = "Message must be between 1 and 1000 characters")
     private String message;
 }
 
