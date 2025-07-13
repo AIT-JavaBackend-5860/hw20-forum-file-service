@@ -36,6 +36,9 @@ public class SecurityConfiguration {
 
                 authorize -> authorize
                         // .anyRequest().permitAll() - все разрешить(к примеру)
+                        .requestMatchers(HttpMethod.POST, "/files/upload").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/files/download/**").permitAll()
+
                         .requestMatchers(HttpMethod.POST, "/account/register", "/forum/posts/**") // на регистрацию
                         .permitAll() // пустить всех
 
