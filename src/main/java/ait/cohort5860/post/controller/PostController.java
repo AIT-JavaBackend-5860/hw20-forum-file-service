@@ -1,6 +1,9 @@
 package ait.cohort5860.post.controller;
 
-import ait.cohort5860.post.dto.*;
+import ait.cohort5860.post.dto.NewCommentDto;
+import ait.cohort5860.post.dto.NewPostDto;
+import ait.cohort5860.post.dto.PostDto;
+import ait.cohort5860.post.dto.PostFileDto;
 import ait.cohort5860.post.model.PostFileEntity;
 import ait.cohort5860.post.service.PostFileService;
 import ait.cohort5860.post.service.PostService;
@@ -13,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 
 import java.time.LocalDate;
 import java.util.List;
@@ -89,7 +91,7 @@ public class PostController {
     // GET
     // to find posts by date range
     @GetMapping("/posts/period")
-    public Iterable<PostDto> findPostsByPeriod(@RequestParam("dateFrom") @NotNull(message="Date 'from' required") LocalDate from, @RequestParam("dateTo") @NotNull(message="Date 'to' required") LocalDate to) {
+    public Iterable<PostDto> findPostsByPeriod(@RequestParam("dateFrom") @NotNull(message = "Date 'from' required") LocalDate from, @RequestParam("dateTo") @NotNull(message = "Date 'to' required") LocalDate to) {
         return postService.findPostsByPeriod(from, to);
     }
 
@@ -109,7 +111,8 @@ public class PostController {
         if (file.getContentType() != null) {
             try {
                 mediaType = MediaType.parseMediaType(file.getContentType());
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
         return ResponseEntity.ok()

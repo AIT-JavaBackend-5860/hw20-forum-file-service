@@ -7,10 +7,10 @@ import ait.cohort5860.post.exception.PostFileNotFoundException;
 import ait.cohort5860.post.exception.PostNotFoundException;
 import ait.cohort5860.post.model.Post;
 import ait.cohort5860.post.model.PostFileEntity;
-import org.modelmapper.ModelMapper;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -26,8 +26,7 @@ public class PostFileServiceImpl implements PostFileService {
 
     @Override
     public PostFileDto uploadFileToPost(Long postId, MultipartFile file) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException("Пост с id " + postId + " не найден"));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Пост с id " + postId + " не найден"));
         try {
             PostFileEntity fileEntity = new PostFileEntity();
             fileEntity.setPost(post);
@@ -46,27 +45,22 @@ public class PostFileServiceImpl implements PostFileService {
     @Override
     @Transactional(readOnly = true)
     public PostFileEntity getFileById(Long fileId) {
-        return postFileRepository.findById(fileId)
-                .orElseThrow(() -> new PostFileNotFoundException("Файл с id " + fileId + " не найден"));
+        return postFileRepository.findById(fileId).orElseThrow(() -> new PostFileNotFoundException("Файл с id " + fileId + " не найден"));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PostFileDto> getFileMetasByPostId(Long postId) {
-        postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException("Пост с id " + postId + " не найден"));
+        postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Пост с id " + postId + " не найден"));
 
         List<PostFileEntity> files = postFileRepository.findFilesByPost_Id(postId);
 
-        return files.stream()
-                .map(file -> modelMapper.map(file, PostFileDto.class))
-                .toList();
+        return files.stream().map(file -> modelMapper.map(file, PostFileDto.class)).toList();
     }
 
     @Override
     public void deletePostFileById(Long fileId) {
-        PostFileEntity file = postFileRepository.findById(fileId)
-                .orElseThrow(() -> new PostFileNotFoundException("Файл с id " + fileId + " не найден"));
+        PostFileEntity file = postFileRepository.findById(fileId).orElseThrow(() -> new PostFileNotFoundException("Файл с id " + fileId + " не найден"));
         postFileRepository.delete(file);
     }
 }
