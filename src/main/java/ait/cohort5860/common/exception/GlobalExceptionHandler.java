@@ -16,7 +16,10 @@ import org.springframework.http.ResponseEntity;                        // Фор
 import org.springframework.web.bind.MethodArgumentNotValidException;  // Обрабатываем ошибки валидации DTO (@Valid)
 import org.springframework.web.bind.annotation.ControllerAdvice;      // Помечаем класс как глобальный обработчик исключений
 import org.springframework.web.bind.annotation.ExceptionHandler;      // Указываем, какие исключения обрабатывать
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException; // Обрабатываем ошибки параметров
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;                                       // Получаем текущее время
@@ -112,6 +115,17 @@ public class GlobalExceptionHandler { // Обрабатываем все иск�
         return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage()); // Возвращаем 404 и сообщение
     }
 
+    @ExceptionHandler(MultipartException.class) // Обрабатываем: неверный формат multipart
+    public ResponseEntity<ErrorResponse> handleMultipartException(MultipartException ex) {
+        log.warn("MultipartException: {}", ex.getMessage()); // Логируем предупреждение
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, "Неверный формат запроса: ожидается multipart/form-data.");
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class) // Обрабатываем: путь не найден
+    public ResponseEntity<ErrorResponse> handleNoHandlerFound(NoHandlerFoundException ex) {
+        log.warn("NoHandlerFoundException: {}", ex.getMessage()); // Логируем предупреждение
+        return buildErrorResponse(HttpStatus.NOT_FOUND, "Запрашиваемый путь не найден");
+    }
 
     private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus status, String message) {
         ErrorResponse error = new ErrorResponse(                      // Формируем объект ответа

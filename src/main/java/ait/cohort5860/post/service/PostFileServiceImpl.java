@@ -2,14 +2,14 @@ package ait.cohort5860.post.service;
 
 import ait.cohort5860.post.dao.PostFileRepository;
 import ait.cohort5860.post.dao.PostRepository;
-import ait.cohort5860.post.dto.PostFileMetaDto;
-import ait.cohort5860.post.dto.PostFileResponseDto;
+import ait.cohort5860.post.dto.PostFileDto;
 import ait.cohort5860.post.exception.PostFileNotFoundException;
 import ait.cohort5860.post.exception.PostNotFoundException;
 import ait.cohort5860.post.model.Post;
 import ait.cohort5860.post.model.PostFileEntity;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.transaction.annotation.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,7 +25,7 @@ public class PostFileServiceImpl implements PostFileService {
     private final ModelMapper modelMapper;
 
     @Override
-    public PostFileResponseDto uploadFileToPost(Long postId, MultipartFile file) {
+    public PostFileDto uploadFileToPost(Long postId, MultipartFile file) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException("Пост с id " + postId + " не найден"));
         try {
@@ -37,25 +37,30 @@ public class PostFileServiceImpl implements PostFileService {
             fileEntity.setSize(file.getSize());
 
             PostFileEntity saved = postFileRepository.save(fileEntity);
-            PostFileResponseDto dto = modelMapper.map(saved, PostFileResponseDto.class);
-            dto.setSize(saved.getSize());
-            return dto;
+            return modelMapper.map(saved, PostFileDto.class);
         } catch (IOException e) {
             throw new RuntimeException("Ошибка при сохранении файла: " + e.getMessage());
         }
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PostFileEntity getFileById(Long fileId) {
         return postFileRepository.findById(fileId)
                 .orElseThrow(() -> new PostFileNotFoundException("Файл с id " + fileId + " не найден"));
     }
 
     @Override
-    public List<PostFileMetaDto> getFileMetasByPostId(Long postId) {
+    @Transactional(readOnly = true)
+    public List<PostFileDto> getFileMetasByPostId(Long postId) {
         postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException("Пост с id " + postId + " не найден"));
-        return postFileRepository.findProjectedByPost_Id(postId);
+
+        List<PostFileEntity> files = postFileRepository.findFilesByPost_Id(postId);
+
+        return files.stream()
+                .map(file -> modelMapper.map(file, PostFileDto.class))
+                .toList();
     }
 
     @Override

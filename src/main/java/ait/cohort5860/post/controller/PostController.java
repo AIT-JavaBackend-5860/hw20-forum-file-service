@@ -95,8 +95,8 @@ public class PostController {
 
     //POST /forum/post/{id}/upload — file upload
     @PostMapping("/post/{id}/upload")
-    public ResponseEntity<PostFileResponseDto> uploadFile(@PathVariable("id") Long postId, @RequestParam("file") MultipartFile file) {
-        PostFileResponseDto dto = postFileService.uploadFileToPost(postId, file);
+    public ResponseEntity<PostFileDto> uploadFile(@PathVariable("id") Long postId, @RequestParam("file") MultipartFile file) {
+        PostFileDto dto = postFileService.uploadFileToPost(postId, file);
         return ResponseEntity.ok(dto);
     }
 
@@ -120,8 +120,8 @@ public class PostController {
 
     // GET /forum/post/{postId}/files — get all files attached to a post
     @GetMapping("/post/{id}/files")
-    public ResponseEntity<List<PostFileMetaDto>> getAllFilesByPost(@PathVariable("id") Long postId) {
-        List<PostFileMetaDto> dtos = postFileService.getFileMetasByPostId(postId);
+    public ResponseEntity<List<PostFileDto>> getAllFilesByPost(@PathVariable("id") Long postId) {
+        List<PostFileDto> dtos = postFileService.getFileMetasByPostId(postId);
         return ResponseEntity.ok(dtos);
     }
 
@@ -130,6 +130,5 @@ public class PostController {
         postFileService.deletePostFileById(fileId); // to service
         return ResponseEntity.noContent().build(); // if 204
     }
-
 
 }

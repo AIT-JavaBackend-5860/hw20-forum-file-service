@@ -25,7 +25,6 @@ public class PostFileEntity {
     private long size; // add file size meta info
 
     @Lob
-    @Column(name="data", nullable = false)
     private byte[] data;
 
     @ManyToOne
