@@ -2,11 +2,12 @@ package ait.cohort5860.post.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
 @Entity // class as table
-@Data //  геттеры, сеттеры, toString, equals, hashCode
 @NoArgsConstructor // empty constructor
 @AllArgsConstructor // constructor with all fields
 public class FileEntity {
@@ -15,12 +16,15 @@ public class FileEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "file_name")
+    @Setter
+    //@Column(name = "file_name")
     private String fileName;
-    @Column(name = "content_type")
+    @Setter
+    //@Column(name = "content_type")
     private String contentType;
 
     @Lob
-    @Column(nullable = false)
+    @Setter
+    //@Column(nullable = false)
     private byte[] data;
 }

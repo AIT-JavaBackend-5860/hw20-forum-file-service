@@ -137,11 +137,7 @@ public class PostServiceImpl implements PostService {
         // create new comment with author and message
         Comment comment = new Comment(author, newCommentDto.getMessage());
 
-        /*
-        comment.setPost(post); // link comment to post
-        post.addComment(comment); // add comment to posts list - can be delete
-        post = postRepository.save(post);
-        */
+
 
         comment.setPost(post);                  // link comment to post
         commentRepository.save(comment);        // save comment only

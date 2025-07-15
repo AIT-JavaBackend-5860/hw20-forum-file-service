@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/changelog-001-init-tables.yaml
   - include:
       file: db/changelog/file-table.yaml
+  - include:
+      file: db/changelog/forum_post_file.yaml

@@ -36,8 +36,11 @@ public class SecurityConfiguration {
 
                 authorize -> authorize
                         // .anyRequest().permitAll() - все разрешить(к примеру)
+
+                        // begin of hw_20 task1
                         .requestMatchers(HttpMethod.POST, "/files/upload").permitAll()
                         .requestMatchers(HttpMethod.GET, "/files/download/**").permitAll()
+                        // end of hw_20 task1
 
                         .requestMatchers(HttpMethod.POST, "/account/register", "/forum/posts/**") // на регистрацию
                         .permitAll() // пустить всех
@@ -66,6 +69,7 @@ public class SecurityConfiguration {
                                 new AuthorizationDecision(webSecurity.checkPostAuthor(context.getVariables().get("id"),
                                         authentication.get().getName()))))
 
+                        // Удаление файла - только автор поста или модератор
                         .requestMatchers(HttpMethod.DELETE, "/forum/post/{id}")
                         .access((authentication, context) -> {
                             boolean isAuthor = webSecurity.checkPostAuthor(context.getVariables().get("id"),
@@ -73,6 +77,33 @@ public class SecurityConfiguration {
                             boolean isModerator = context.getRequest().isUserInRole(Role.MODERATOR.name());
                             return new AuthorizationDecision(isAuthor || isModerator);
                         })
+
+
+                        // begin of hw_20 task2
+                        // Получить список файлов для поста — только для аутентифицированных пользователей
+                        .requestMatchers(HttpMethod.GET, "/forum/post/{id}/files")
+                        .authenticated()
+
+                        // Скачать файл — только для аутентифицированных пользователей
+                        .requestMatchers(HttpMethod.GET, "/forum/file/{id}/download")
+                        .authenticated()
+
+                        // Загрузка файла к посту — только автор поста или модератор
+                        .requestMatchers(HttpMethod.POST, "/forum/post/{id}/upload")
+                        .access((authentication, context) -> {
+                            boolean isAuthor = webSecurity.checkPostAuthor(context.getVariables().get("id"), authentication.get().getName());
+                            boolean isModerator = context.getRequest().isUserInRole(Role.MODERATOR.name());
+                            return new AuthorizationDecision(isAuthor || isModerator);
+                        })
+
+                        // Удаление файла — только автор поста-владельца файла или модератор
+                        .requestMatchers(HttpMethod.DELETE, "/forum/file/{id}")
+                        .access((authentication, context) -> {
+                            boolean isAuthor = webSecurity.checkFileAuthor(context.getVariables().get("id"), authentication.get().getName());
+                            boolean isModerator = context.getRequest().isUserInRole(Role.MODERATOR.name());
+                            return new AuthorizationDecision(isAuthor || isModerator);
+                        })
+                        // end of hw_20 task2
 
                         .anyRequest() // все
                         .authenticated()); // проверяется

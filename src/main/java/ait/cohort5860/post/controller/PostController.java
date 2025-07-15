@@ -1,15 +1,19 @@
 package ait.cohort5860.post.controller;
 
-import ait.cohort5860.post.dto.NewCommentDto;
-import ait.cohort5860.post.dto.NewPostDto;
-import ait.cohort5860.post.dto.PostDto;
+import ait.cohort5860.post.dto.*;
+import ait.cohort5860.post.model.PostFileEntity;
+import ait.cohort5860.post.service.PostFileService;
 import ait.cohort5860.post.service.PostService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,6 +25,8 @@ import java.util.List;
 @RequestMapping("/forum") // Base path for all endpoints
 public class PostController {
     private final PostService postService;
+    private final PostFileService postFileService;
+
 
     // POST
     // Add a new post
@@ -53,7 +59,7 @@ public class PostController {
     }
 
     // DELETE
-    // Delete a post by ID
+    // to delete a post by ID
     @DeleteMapping("/post/{id}")
     public PostDto deletePost(@PathVariable Long id) {
         return postService.deletePost(id);
@@ -67,23 +73,63 @@ public class PostController {
     }
 
     // GET
-    // Get all posts by author
+    // to get all posts by author
     @GetMapping("/posts/author/{author}")
     public Iterable<PostDto> findPostsByAuthor(@PathVariable String author) {
         return postService.findPostsByAuthor(author);
     }
 
     // GET
-    // Find posts by tags
+    // to find posts by tags
     @GetMapping("/posts/tags")
     public Iterable<PostDto> findPostsByTags(@RequestParam("values") List<String> tags) {
         return postService.findPostsByTags(tags);
     }
 
     // GET
-    // Find posts by date range
+    // to find posts by date range
     @GetMapping("/posts/period")
     public Iterable<PostDto> findPostsByPeriod(@RequestParam("dateFrom") @NotNull(message="Date 'from' required") LocalDate from, @RequestParam("dateTo") @NotNull(message="Date 'to' required") LocalDate to) {
         return postService.findPostsByPeriod(from, to);
     }
+
+    //POST /forum/post/{id}/upload — file upload
+    @PostMapping("/post/{id}/upload")
+    public ResponseEntity<PostFileResponseDto> uploadFile(@PathVariable("id") Long postId, @RequestParam("file") MultipartFile file) {
+        PostFileResponseDto dto = postFileService.uploadFileToPost(postId, file);
+        return ResponseEntity.ok(dto);
+    }
+
+    // GET /forum/file/{id}/download — file download
+    @GetMapping("/file/{id}/download")
+    public ResponseEntity<byte[]> downloadFile(@PathVariable("id") Long fileId) {
+        PostFileEntity file = postFileService.getFileById(fileId);
+
+        MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        if (file.getContentType() != null) {
+            try {
+                mediaType = MediaType.parseMediaType(file.getContentType());
+            } catch (Exception ignored) {}
+        }
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
+                .contentType(mediaType)
+                .body(file.getData());
+    }
+
+    // GET /forum/post/{postId}/files — get all files attached to a post
+    @GetMapping("/post/{id}/files")
+    public ResponseEntity<List<PostFileMetaDto>> getAllFilesByPost(@PathVariable("id") Long postId) {
+        List<PostFileMetaDto> dtos = postFileService.getFileMetasByPostId(postId);
+        return ResponseEntity.ok(dtos);
+    }
+
+    @DeleteMapping("/file/{id}")
+    public ResponseEntity<Void> deletePostFile(@PathVariable("id") Long fileId) {
+        postFileService.deletePostFileById(fileId); // to service
+        return ResponseEntity.noContent().build(); // if 204
+    }
+
+
 }

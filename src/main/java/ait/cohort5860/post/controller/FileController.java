@@ -19,12 +19,14 @@ public class FileController {
         this.fileService = fileService;
     }
 
+    // Upload file (without relation to forum posts)
     @PostMapping("/upload")
     public ResponseEntity<FileResponseDto> uploadFile(@RequestParam("file") MultipartFile file) {
         FileResponseDto dto = fileService.storeFile(file);
         return ResponseEntity.ok(dto);
     }
 
+    // Download file by ID
     @GetMapping("/download/{id}")
     public ResponseEntity<byte[]> downloadFile(@PathVariable Long id) {
         FileEntity file = fileService.getFile(id);

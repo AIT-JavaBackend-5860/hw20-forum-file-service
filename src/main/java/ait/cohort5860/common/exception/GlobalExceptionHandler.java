@@ -5,8 +5,9 @@ import ait.cohort5860.accounting.exception.InvalidDataException;
 import ait.cohort5860.accounting.exception.UserExistsException;
 import ait.cohort5860.accounting.exception.UserNotFoundException;
 import ait.cohort5860.accounting.service.AccountingService;
+import ait.cohort5860.post.controller.FileStorageException;
+import ait.cohort5860.post.exception.PostFileNotFoundException;
 import ait.cohort5860.post.exception.PostNotFoundException;
-import ait.cohort5860.accounting.dto.EmailDto;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;                                       // Подключаем логгер (log.warn, log.error и т.п.)
@@ -16,6 +17,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;  // Обр�
 import org.springframework.web.bind.annotation.ControllerAdvice;      // Помечаем класс как глобальный обработчик исключений
 import org.springframework.web.bind.annotation.ExceptionHandler;      // Указываем, какие исключения обрабатывать
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException; // Обрабатываем ошибки параметров
+
+import java.io.FileNotFoundException;
 import java.time.LocalDateTime;                                       // Получаем текущее время
 import java.util.HashMap;                                             // Используем Map для списка ошибок
 import java.util.Map;                                                 // Интерфейс Map
@@ -91,6 +94,25 @@ public class GlobalExceptionHandler { // Обрабатываем все иск�
         return buildErrorResponse(HttpStatus.BAD_REQUEST, message);   // Возвращаем 400 и сообщение
     }
 
+    @ExceptionHandler(FileStorageException.class)                         // Обрабатываем: ошибка при сохранении файла
+    public ResponseEntity<ErrorResponse> handleFileStorage(FileStorageException ex) {
+        log.warn("FileStorageException: {}", ex.getMessage());            // Пишем в лог предупреждение
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage()); // Возвращаем 400 и сообщение
+    }
+
+    @ExceptionHandler(FileNotFoundException.class)                        // Обрабатываем: файл не найден
+    public ResponseEntity<ErrorResponse> handleFileNotFound(FileNotFoundException ex) {
+        log.warn("FileNotFoundException: {}", ex.getMessage());           // Пишем в лог предупреждение
+        return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage()); // Возвращаем 404 и сообщение
+    }
+
+    @ExceptionHandler(PostFileNotFoundException.class)                        // Обрабатываем: файл поста не найден
+    public ResponseEntity<ErrorResponse> handleFileNotFound(PostFileNotFoundException ex) {
+        log.warn("PostFileNotFoundException: {}", ex.getMessage());           // Пишем в лог предупреждение
+        return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage()); // Возвращаем 404 и сообщение
+    }
+
+
     private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus status, String message) {
         ErrorResponse error = new ErrorResponse(                      // Формируем объект ответа
                 status.value(),                                       // Устанавливаем HTTP-код (400, 404, 500 и т.д.)
@@ -98,5 +120,7 @@ public class GlobalExceptionHandler { // Обрабатываем все иск�
                 LocalDateTime.now());                                 // Указываем текущую дату и время
         return ResponseEntity.status(status).body(error);            // Возвращаем ResponseEntity с телом ошибки
     }
+
+
 
 }

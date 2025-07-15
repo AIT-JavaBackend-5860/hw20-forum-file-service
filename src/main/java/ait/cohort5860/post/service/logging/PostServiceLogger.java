@@ -8,7 +8,7 @@ import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Service;
 
 @Service // компонент Spring — будет автоматически обнаружен
-@Slf4j(topic = "Post Service") // подключение логгера SLF4J с названием темы
+@Slf4j(topic = "Post Service") // подключение логгера SLF4J
 @Aspect // указывает, что класс — аспект AOP
 public class PostServiceLogger {
 

@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-add-post-file-table
+      author: roman
+      changes:
+        - createTable:
+            tableName: post_file
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: file_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content_type
+                  type: varchar(100)
+              - column:
+                  name: data
+                  type: blob
+              - column:
+                  name: size
+                  type: bigint
+              - column:
+                  name: post_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: post_file
+            baseColumnNames: post_id
+            referencedTableName: posts
+            referencedColumnNames: id
+            constraintName: fk_post_file_post_id
+            onDelete: CASCADE
